@@ -14,13 +14,13 @@ const updateBtn     = document.getElementById('update-btn')
 const deleteBtn     = document.getElementById('delete-btn')
 
 const titleInput    = document.getElementById('id_title')
-const bodyInput    = document.getElementById('id_body')
+const bodyInput     = document.getElementById('id_body')
 const csrf          = document.getElementsByName('csrfmiddlewaretoken')
 
 
-backBtn.addEventListener('click', ()=>{
+/* backBtn.addEventListener('click', ()=>{
     history.back()
-})
+}) */
 
 console.log("HREF", window.location.href)
 
