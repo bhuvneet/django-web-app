@@ -25,7 +25,8 @@ SECRET_KEY = 'django-insecure-ahn0n$dmd@8&@dy0b&5t3brpo$n@nkdjeqaja^e^crl-e)%5te
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+#10.244.92.169 is th IP given by ZeroTier
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', '10.244.92.169']
 
 
 # Application definition

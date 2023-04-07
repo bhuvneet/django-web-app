@@ -9,9 +9,15 @@ from .utils import action_permission
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect
 
-# Create your views here.
+# File:      views.py
+#By:         Bhuvneet Thakur
+#Date:       April 7, 2023
+#Description: This file contains the Views to create posts, update posts, delete posts, like/unlike posts, post detail, image uploading
 
-@login_required
+# Function: post_list_and_create
+# Parameters: request
+# Description:  This function takes in the request from the user and generated an AJAX call to display the posts
+# Return: renders request and context data structure
 def post_list_and_create(request):
     form = PostForm(request.POST or None)
 
@@ -34,7 +40,10 @@ def post_list_and_create(request):
 
     return render(request, 'posts/main.html', context)
 
-@login_required
+# Function: post_detail
+# Parameters: request, pk
+# Description:  This function takes in the request and pk and generated an object and form variables
+# Return: renders request and context data structure
 def post_detail(request, pk):
     obj = Post.objects.get(pk=pk)
     form = PostForm()
@@ -46,7 +55,10 @@ def post_detail(request, pk):
 
     return render(request, 'posts/detail.html', context)
 
-@login_required
+# Function: load_post_data_view
+# Parameters: request, num_posts
+# Description:  This function takes in the request and pk and generates an item data structure to hold the information about the post
+# Return: JSON response of true, else returns to main post
 def load_post_data_view(request, num_posts):
     if request.headers.get('x-requested-with') == 'XMLHttpRequest':
         visible = 3
@@ -69,7 +81,10 @@ def load_post_data_view(request, num_posts):
         return JsonResponse({'data': data[lower:upper], 'size': size})
     return redirect('posts:main-board')
 
-@login_required
+# Function: post_detail_data_view
+# Parameters: request, pk
+# Description:  This function takes in the request and pk and generates an data data structure to hold the information about the post
+# Return: JSON response containing the data
 def post_detail_data_view(request, pk):
     obj = Post.objects.get(pk=pk)
     data = {
@@ -81,6 +96,11 @@ def post_detail_data_view(request, pk):
     }
     return JsonResponse({'data': data})
 
+
+# Function: like_unlike_post
+# Parameters: request
+# Description:  This function takes in the request and returns the JSONResponse for liked bool and like count
+# Return: JSON response containing the data if true, else returns to post:main-board
 @login_required
 def like_unlike_post(request):
     if request.headers.get('x-requested-with') == 'XMLHttpRequest':
@@ -95,6 +115,11 @@ def like_unlike_post(request):
         return JsonResponse({'liked' : liked, 'count' : obj.like_count})
     return redirect('posts:main-board')
 
+
+# Function: update_post
+# Parameters: request , pk
+# Description:  This function takes in the request and pk and checks if an AJAX call to update the post
+# Return: JSON response containing the title and body of new post
 @login_required
 @action_permission
 def update_post(request, pk):
@@ -110,6 +135,10 @@ def update_post(request, pk):
         'body': new_body,
     })
 
+# Function: delete_post
+# Parameters: request , pk
+# Description:  This function takes in the request and pk and checks if an AJAX call to delete the post
+# Return: JSON response
 @login_required
 @action_permission
 def delete_post(request, pk):
@@ -118,6 +147,11 @@ def delete_post(request, pk):
         obj.delete()
     return JsonResponse({})
 
+
+# Function: image_upload_view
+# Parameters: request , pk
+# Description:  This function takes in the request and checks if the method is POST, to upload images to the post being added
+# Return: HTTP respone if true, else redirect('posts:main-board') 
 @login_required
 def image_upload_view(request):
     if request.method == 'POST':

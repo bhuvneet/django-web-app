@@ -1,5 +1,9 @@
-console.log('hello profiles')
+/* File:    main.js
+By:         Bhuvneet Thakur
+Date:       April 7, 2023
+Description: This file contains the code to update the BIO of a user */
 
+// variables for functions
 const avatarBox         = document.getElementById('avatar-box')
 const alertBox          = document.getElementById('alert-box')
 const profileForm       = document.getElementById('profile-form')
@@ -7,6 +11,10 @@ const csrf              = document.getElementsByName('csrfmiddlewaretoken')
 const bioInput          = document.getElementById('id_bio')
 const avatarInput       = document.getElementById('id_avatar')
 
+/* Function: profileForm.addEventListener
+ Parameters: submit
+ Description:  This function is called when user clicks on SAVE button in profiles URL to update the BIO
+ Return: None */
 profileForm.addEventListener('submit', e=>{
     e.preventDefault()
 

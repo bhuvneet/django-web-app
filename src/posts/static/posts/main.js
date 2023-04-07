@@ -1,6 +1,10 @@
+/* File:    main.js
+By:         Bhuvneet Thakur
+Date:       April 7, 2023
+Description: This file contains the functionality for event listeners on add, load more posts and update posts. 
+It also contains the Dropzone code to add pictures to posts */
 
-console.log('hello world')
-
+// variables for functions
 const postsBox      = document.getElementById('posts-box')
 const spinnerBox    = document.getElementById('spinner-box')
 const loadBtn       = document.getElementById('load-btn')
@@ -17,13 +21,17 @@ const addBtn        = document.getElementById('add-btn')
 const closeBtns      = [...document.getElementsByClassName('add-modal-close')]
 const dropzone      = document.getElementById('my-dropzone')
 
+
+/* Function: getCookie
+ Parameters: name
+ Description:  This function is used to generate the csrftoken
+ Return: cookie value */
 const getCookie = (name) => {
     let cookieValue = null;
     if (document.cookie && document.cookie !== '') {
         const cookies = document.cookie.split(';');
         for (let i = 0; i < cookies.length; i++) {
             const cookie = cookies[i].trim();
-            // Does this cookie string begin with the name we want?
             if (cookie.substring(0, name.length + 1) === (name + '=')) {
                 cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
                 break;
@@ -35,13 +43,17 @@ const getCookie = (name) => {
 
 const csrftoken = getCookie('csrftoken');
 
-
+// raise alert and display that post has been deleted
 const deleted = localStorage.getItem('title')
 if(deleted){
     handleAlerts('danger', `deleted "${deleted}"`)
     localStorage.clear()
 }
 
+/* Function: likeUnlikePosts
+ Parameters: None
+ Description:  This function takes is used to update the UI for the liked/unliked posts
+ Return: None */
 const likeUnlikePosts = () => {
     const likeUnlikeForms = [...document.getElementsByClassName('like-unlike-forms')]
     console.log(likeUnlikeForms)
@@ -60,8 +72,17 @@ const likeUnlikePosts = () => {
             },
             success: function(response)
             {
-                console.log(response)
-                clickedBtn.textContent = response.liked ? `Unlike (${response.count})`: `Like (${response.count})`
+                console.log(response.count)
+                
+                if(response.count === undefined)
+                {
+                    handleAlerts('danger', 'Please log in to like posts')
+                }
+                else
+                {
+                    clickedBtn.textContent = response.liked ? `Unlike (${response.count})`: `Like (${response.count})`
+                }   
+                
             },
             error: function(error){
                 console.log(error)
@@ -72,14 +93,16 @@ const likeUnlikePosts = () => {
 
 let visible = 3
 
+/* Function: getData
+ Parameters: None
+ Description:  This function calls AJAX to update the UI of the webpage to display the Like / Unlike count
+ Return: None */
 const getData = () => {
     $.ajax({
         type: 'GET',
         url: `/data/${visible}/`,
         success: function(response){
-            console.log(response)
             const data = response.data
-            //const data = JSON.parse(response.data)  // convert to JSON object
             setTimeout(() => {
                 spinnerBox.classList.add('.not-visible')
                 console.log(data)
@@ -107,9 +130,6 @@ const getData = () => {
                 });
 
                 likeUnlikePosts()
-                // <form class="like-unlike-forms" data-form-id="${element.id}">
-                //<button href="#" class="btn btn-primary" id="like-unlike-${element.id}">${element.liked ? `Unlike (${element.count})`: `Like (${element.count})`}</button>
-
             }, 100)
    
             console.log(response.size)  
@@ -129,16 +149,21 @@ const getData = () => {
     })
 }
 
+// event listener to load 3 more posts when load button is clicked
 loadBtn.addEventListener('click', () => {
     spinnerBox.classList.remove('not-visible')
     visible += 3
     getData()
 })
 
+/* Function: postForm.addEventListener
+ Parameters: submit click
+ Description:  This function is called when a post is added, the webpage is reset and updated.
+ Return: None */
 let newPostId = null
 postForm.addEventListener('submit', e=> {
     e.preventDefault()
-    console.log('in event listener')
+
     $.ajax({
         type: 'POST',
         url:   '',
@@ -171,10 +196,7 @@ postForm.addEventListener('submit', e=> {
                 </div>
             `)
             likeUnlikePosts()
-            //$('#addPostModal').modal('hide')
             handleAlerts('success', 'New post added!')
-            //postForm.reset()
-
         },
         error: function(error){
             console.log(error)
@@ -183,12 +205,13 @@ postForm.addEventListener('submit', e=> {
     })
 })
 
+// when add button is clicked, dropzone is displayed.
 addBtn.addEventListener('click', ()=>{
     dropzone.classList.remove('not-visible')
-
-
 })
 
+// for each method to remove files when close button is clicked, 
+// so when new post is added, old images have been removed
 closeBtns.forEach(btn=> btn.addEventListener('click', ()=>{
     postForm.reset()
     if(!dropzone.classList.contains('not-visible')){
@@ -198,8 +221,10 @@ closeBtns.forEach(btn=> btn.addEventListener('click', ()=>{
     myDropzone.removeAllFiles(true)
 }))
 
+// Dropzone functionality to display the option to drop image files.
 Dropzone.autoDiscover = false
 
+// this will load once page has been loaded.
 window.onload = function(){
     
     const myDropzone = new Dropzone('#my-dropzone', {
@@ -215,6 +240,5 @@ window.onload = function(){
         acceptedFiles: '.png, .jpg, .jpeg'
     })
 }
-
 
 getData()

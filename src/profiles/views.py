@@ -4,8 +4,15 @@ from .forms import ProfileForm
 from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
 
-# Create your views here.
+# File:      views.py
+#By:         Bhuvneet Thakur
+#Date:       April 7, 2023
+#Description: This file contains the view for the profile
 
+# Function: my_profile_view
+# Parameters: request
+# Description:  This function takes in the request from the user and generated an AJAX call to display the profile page
+# Return: renders request and context data structure
 @login_required
 def my_profile_view(request):
     obj = Profile.objects.get(user=request.user)
